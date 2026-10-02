@@ -30,8 +30,11 @@ if (container) {
   );
 
   renderer.outputColorSpace = THREE.SRGBColorSpace;
+
   container.appendChild(renderer.domElement);
+
   const prismGroup = new THREE.Group();
+
   prismGroup.scale.set(
     0.62,
     0.62,
@@ -48,7 +51,7 @@ if (container) {
 
   const refractionTexture = new THREE.Texture();
 
-  refractionTexture.colorSpace =THREE.SRGBColorSpace;
+  refractionTexture.colorSpace = THREE.SRGBColorSpace;
 
   const geometry = new THREE.CylinderGeometry(
     1.35,
@@ -83,26 +86,26 @@ if (container) {
 
       void main() {
 
-           vNormal =
-            normalize(
-                normalMatrix * normal
-            );
+        vNormal =
+          normalize(
+            normalMatrix * normal
+          );
 
-           vec4 clipPosition =
-            projectionMatrix *
-            modelViewMatrix *
-            vec4(position, 1.0);
+        vec4 clipPosition =
+          projectionMatrix *
+          modelViewMatrix *
+          vec4(position, 1.0);
 
-           gl_Position =
-            clipPosition;
+        gl_Position =
+          clipPosition;
 
-           vScreenUv =
-            clipPosition.xy /
-            clipPosition.w;
+        vScreenUv =
+          clipPosition.xy /
+          clipPosition.w;
 
-           vScreenUv =
-            vScreenUv * 0.5 + 0.5;
-    }
+        vScreenUv =
+          vScreenUv * 0.5 + 0.5;
+      }
     `,
 
     fragmentShader: `
@@ -143,6 +146,7 @@ if (container) {
           normal.xy *
           uRefraction *
           (0.45 + edgeFactor * 2.8);
+
         /*
          * Slight chromatic separation.
          */
@@ -201,102 +205,104 @@ if (container) {
         float sharpEdge =
           pow(edgeStrength, 3.5);
 
-          vec3 lightDirection =
-            normalize(
-              vec3(
-                -0.45,
-                0.55,
-                1.0
-              )
-            );
-
-          float faceLight =
-            max(
-              dot(normal, lightDirection),
-              0.0
+        vec3 lightDirection =
+          normalize(
+            vec3(
+              -0.45,
+              0.55,
+              1.0
+            )
           );
 
-          float faceHighlight =
-            pow(
-              faceLight,
-              2.5
-            );
+        float faceLight =
+          max(
+            dot(normal, lightDirection),
+            0.0
+          );
 
-          vec3 reflected =
-            glassTint *
-            sharpEdge *
-            1.15;
+        float faceHighlight =
+          pow(
+            faceLight,
+            2.5
+          );
 
-          // Add directional light to the glass face
-            reflected +=
-              glassTint *
-              faceHighlight *
-              0.45;
+        vec3 reflected =
+          glassTint *
+          sharpEdge *
+          1.15;
 
-          // ========================================
-          // INTERNAL GLASS REFLECTION
-          // ========================================
+        // Add directional light to the glass face
+        reflected +=
+          glassTint *
+          faceHighlight *
+          0.45;
 
-          float internalAngle =
-            pow(
-              1.0 - abs(normal.z),
-              1.5
-            );
+        // ========================================
+        // INTERNAL GLASS REFLECTION
+        // ========================================
 
-          float internalGlow =
-            sin(
-              (normal.x + normal.y) * 5.0
-            ) * 0.5 + 0.5;
+        float internalAngle =
+          pow(
+            1.0 - abs(normal.z),
+            1.5
+          );
 
-          vec3 internalColor =
-            vec3(
-              0.72,
-              0.88,
-              1.0
-            );
+        float internalGlow =
+          sin(
+            (normal.x + normal.y) * 5.0
+          ) * 0.5 + 0.5;
 
-          reflected +=
-            internalColor *
-            internalAngle *
-            internalGlow *
-            0.16;    
+        vec3 internalColor =
+          vec3(
+            0.72,
+            0.88,
+            1.0
+          );
 
-          float silhouette =
-            pow(
-              1.0 - abs(normal.z),
-              6.0
-            );
+        reflected +=
+          internalColor *
+          internalAngle *
+          internalGlow *
+          0.16;
 
-          reflected +=
-            vec3(
-              0.85,
-              0.95,
-              1.0
-            ) *
-            silhouette *
-            0.35;
-          float rim =
-            pow(
-              1.0 - abs(
-                dot(
-                  normal,
-                  vec3(0.0, 0.0, 1.0)
-                )
-              ),
-              4.0
-            );
+        float silhouette =
+          pow(
+            1.0 - abs(normal.z),
+            6.0
+          );
 
-          vec3 rimColor =
-            vec3(
-              0.55,
-              0.82,
-              1.0
-            );
+        reflected +=
+          vec3(
+            0.85,
+            0.95,
+            1.0
+          ) *
+          silhouette *
+          0.35;
 
-          reflected +=
-            rimColor *
-            rim *
-            0.32;
+        float rim =
+          pow(
+            1.0 - abs(
+              dot(
+                normal,
+                vec3(0.0, 0.0, 1.0)
+              )
+            ),
+            4.0
+          );
+
+        vec3 rimColor =
+          vec3(
+            0.55,
+            0.82,
+            1.0
+          );
+
+        reflected +=
+          rimColor *
+          rim *
+          0.32;
+
         /*
          * Combine the background
          * with the glass edge.
@@ -320,6 +326,7 @@ if (container) {
           );
       }
     `,
+
     transparent: true,
     side: THREE.DoubleSide,
     depthWrite: false
@@ -330,7 +337,7 @@ if (container) {
     material
   );
 
-  prism.rotation.x =Math.PI / 2;
+  prism.rotation.x = Math.PI / 2;
 
   prismGroup.add(prism);
 
@@ -366,7 +373,8 @@ if (container) {
 
   prismGroup.add(innerPrism);
 
-  const edges =new THREE.EdgesGeometry(geometry);
+  const edges =
+    new THREE.EdgesGeometry(geometry);
 
   const edgeMaterial =
     new THREE.LineBasicMaterial({
@@ -381,7 +389,7 @@ if (container) {
       edgeMaterial
     );
 
-  edgeLines.rotation.x =Math.PI / 2;
+  edgeLines.rotation.x = Math.PI / 2;
 
   prismGroup.add(edgeLines);
 
@@ -437,17 +445,20 @@ if (container) {
     4,
     2
   );
+
   scene.add(topLight);
-  
+
   let captureCanvas = null;
   let captureTexture = null;
+
   async function capturePage() {
 
+    const prismContainer =
+      document.getElementById("prism-container");
+
     try {
-      const prismContainer =
-        document.getElementById("prism-container");
-      
-        if (prismContainer) {
+
+      if (prismContainer) {
         prismContainer.style.visibility = "hidden";
       }
 
@@ -466,28 +477,35 @@ if (container) {
           }
         );
 
-      if (prismContainer) {prismContainer.style.visibility = "visible";}
-
-
       if (!captureTexture) {
 
         captureTexture =
-          new THREE.CanvasTexture(captureCanvas);
+          new THREE.CanvasTexture(
+            captureCanvas
+          );
 
-        captureTexture.colorSpace =THREE.SRGBColorSpace;
+        captureTexture.colorSpace =
+          THREE.SRGBColorSpace;
 
-        captureTexture.minFilter =THREE.LinearFilter;
+        captureTexture.minFilter =
+          THREE.LinearFilter;
 
-        captureTexture.magFilter =THREE.LinearFilter;
+        captureTexture.magFilter =
+          THREE.LinearFilter;
 
-        captureTexture.generateMipmaps =false;
+        captureTexture.generateMipmaps =
+          false;
 
-        material.uniforms.uTexture.value =captureTexture;
+        material.uniforms.uTexture.value =
+          captureTexture;
 
       } else {
 
-        captureTexture.image =captureCanvas;
-        captureTexture.needsUpdate =true;
+        captureTexture.image =
+          captureCanvas;
+
+        captureTexture.needsUpdate =
+          true;
       }
 
     } catch (error) {
@@ -496,31 +514,48 @@ if (container) {
         "Friction prism capture failed:",
         error
       );
+
+    } finally {
+
+      /*
+       * IMPORTANT:
+       * Always show the prism again,
+       * even if html2canvas fails.
+       */
+
+      if (prismContainer) {
+        prismContainer.style.visibility =
+          "visible";
+      }
     }
   }
 
   capturePage();
+
   let mouseX = 0;
   let mouseY = 0;
 
   let targetMouseX = 0;
   let targetMouseY = 0;
 
-  let mouseInsidePrismArea =false;
+  let mouseInsidePrismArea = false;
 
   window.addEventListener(
     "mousemove",
     (event) => {
 
-      const x =event.clientX;
+      const x =
+        event.clientX;
 
-      const y =event.clientY;
+      const y =
+        event.clientY;
 
       const areaLeft =
         window.innerWidth *
         0.45;
 
-      const areaRight =window.innerWidth;
+      const areaRight =
+        window.innerWidth;
 
       const areaTop =
         window.innerHeight *
@@ -562,7 +597,9 @@ if (container) {
 
   function animate() {
 
-    requestAnimationFrame(animate);
+    requestAnimationFrame(
+      animate
+    );
 
     mouseX +=
       (
@@ -575,7 +612,6 @@ if (container) {
         targetMouseY -
         mouseY
       ) * 0.045;
-
 
     prismGroup.rotation.y =
       mouseX * 0.55;
@@ -592,6 +628,7 @@ if (container) {
         Math.abs(mouseX) +
         Math.abs(mouseY)
       ) * 0.012;
+
     renderer.render(
       scene,
       camera
