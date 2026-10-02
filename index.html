@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Friction</title>
+
+  <link
+    rel="icon"
+    type="image/png"
+    href="/friction-logo.png"
+  >
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  >
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@500;600&display=swap"
+    rel="stylesheet"
+  >
+</head>
+
+<body>
+
+  <!-- =========================================
+       OPENING SCREEN
+       ========================================= -->
+
+  <div
+    class="opening-screen"
+    id="openingScreen"
+  >
+    <div class="opening-content">
+      <span>FRICTION</span>
+    </div>
+  </div>
+
+
+  <!-- =========================================
+       CUSTOM CURSOR
+       ========================================= -->
+
+  <div class="cursor-dot"></div>
+  <div class="cursor-ring"></div>
+
+
+  <!-- =========================================
+       MAIN APP
+       ========================================= -->
+
+  <div id="app">
+
+
+    <!-- =========================================
+         BACKGROUND
+         ========================================= -->
+
+    <div class="background">
+
+      <div id="prism-container"></div>
+
+      <div class="grain"></div>
+
+      <div class="glow glow-one"></div>
+      <div class="glow glow-two"></div>
+
+    </div>
+
+
+    <!-- =========================================
+         NAVBAR
+         ========================================= -->
+
+    <header class="navbar">
+
+      <div class="logo">
+        FRICTION
+      </div>
+
+      <div class="nav-right">
+
+        <span>
+          ENTER A STORY
+        </span>
+
+        <button id="themeButton">
+          THEME
+        </button>
+
+        <button id="aboutButton">
+          ABOUT
+        </button>
+
+      </div>
+
+    </header>
+
+
+    <!-- =========================================
+         LANDING PAGE
+         ========================================= -->
+
+    <main class="landing">
+
+
+      <!-- INTRO -->
+
+      <section class="intro">
+
+        <p class="eyebrow">
+          AN INTERACTIVE COLLECTION
+        </p>
+
+        <h1>
+          Step into<br>
+          <span>the story.</span>
+        </h1>
+
+        <p class="description">
+          Don't watch from the outside.
+          Enter the worlds you already know.
+        </p>
+
+      </section>
+
+
+      <!-- =========================================
+           SHOW DOORS
+           ========================================= -->
+
+      <section
+        class="doors"
+        id="doors"
+      >
+
+
+        <!-- DEXTER -->
+
+        <button
+          class="door"
+          data-show="Dexter"
+          data-number="01"
+        >
+
+          <span class="door-number">
+            01
+          </span>
+
+          <div class="door-image">
+
+            <img
+              src="/images/shows/dexter.jpg"
+              alt="Dexter"
+            >
+
+          </div>
+
+        </button>
+
+
+        <!-- FRIENDS -->
+
+        <button
+          class="door"
+          data-show="Friends"
+          data-number="02"
+        >
+
+          <span class="door-number">
+            02
+          </span>
+
+          <div class="door-image">
+
+            <img
+              src="/images/shows/friends.jpg"
+              alt="Friends"
+            >
+
+          </div>
+
+        </button>
+
+
+        <!-- HOW I MET YOUR MOTHER -->
+
+        <button
+          class="door"
+          data-show="How I Met Your Mother"
+          data-number="03"
+        >
+
+          <span class="door-number">
+            03
+          </span>
+
+          <div class="door-image">
+
+            <img
+              src="/images/shows/himym.jpg"
+              alt="How I Met Your Mother"
+            >
+
+          </div>
+
+        </button>
+
+
+        <!-- THE MENTALIST -->
+
+        <button
+          class="door"
+          data-show="The Mentalist"
+          data-number="04"
+        >
+
+          <span class="door-number">
+            04
+          </span>
+
+          <div class="door-image">
+
+            <img
+              src="/images/shows/mentalist.jpg"
+              alt="The Mentalist"
+            >
+
+          </div>
+
+        </button>
+
+
+        <!-- BREAKING BAD -->
+
+        <button
+          class="door"
+          data-show="Breaking Bad"
+          data-number="05"
+        >
+
+          <span class="door-number">
+            05
+          </span>
+
+          <div class="door-image">
+
+            <img
+              src="/images/shows/breaking-bad.jpg"
+              alt="Breaking Bad"
+            >
+
+          </div>
+
+        </button>
+
+
+        <!-- PSYCH -->
+
+        <button
+          class="door"
+          data-show="Psych"
+          data-number="06"
+        >
+
+          <span class="door-number">
+            06
+          </span>
+
+          <div class="door-image">
+
+            <img
+              src="/images/shows/psych.jpg"
+              alt="Psych"
+            >
+
+          </div>
+
+        </button>
+
+
+        <!-- SUITS -->
+
+        <button
+          class="door"
+          data-show="Suits"
+          data-number="07"
+        >
+
+          <span class="door-number">
+            07
+          </span>
+
+          <div class="door-image">
+
+            <img
+              src="/images/shows/suits.jpg"
+              alt="Suits"
+            >
+
+          </div>
+
+        </button>
+
+
+        <!-- HOUSE -->
+
+        <button
+          class="door"
+          data-show="House"
+          data-number="08"
+        >
+
+          <span class="door-number">
+            08
+          </span>
+
+          <div class="door-image">
+
+            <img
+              src="/images/shows/house.jpg"
+              alt="House"
+            >
+
+          </div>
+
+        </button>
+
+
+        <!-- PEAKY BLINDERS -->
+
+        <button
+          class="door"
+          data-show="Peaky Blinders"
+          data-number="09"
+        >
+
+          <span class="door-number">
+            09
+          </span>
+
+          <div class="door-image">
+
+            <img
+              src="/images/shows/peaky-blinders.jpg"
+              alt="Peaky Blinders"
+            >
+
+          </div>
+
+        </button>
+
+      </section>
+
+    </main>
+
+
+    <!-- =========================================
+         FOOTER
+         ========================================= -->
+
+    <footer class="footer">
+
+      <span>
+        FRICTION / 2026
+      </span>
+
+      <span>
+        SELECT A DOOR TO BEGIN
+      </span>
+
+    </footer>
+
+
+    <!-- =========================================
+         STORY TRANSITION
+         ========================================= -->
+
+    <div
+      class="transition"
+      id="transition"
+    >
+
+      <div class="transition-content">
+
+        <span
+          class="transition-number"
+          id="transitionNumber"
+        >
+          01
+        </span>
+
+        <h2 id="transitionTitle">
+          DEXTER
+        </h2>
+
+        <p>
+          ENTERING STORY
+        </p>
+
+      </div>
+
+    </div>
+
+
+
+
+  </div>
+
+    <!-- =========================================
+         ABOUT OVERLAY
+         ========================================= -->
+
+    <div
+      class="about-overlay"
+      id="aboutOverlay"
+    >
+
+      <button
+        class="close-about"
+        id="closeAbout"
+      >
+        CLOSE ×
+      </button>
+
+
+      <div class="about-content">
+
+        <p class="eyebrow">
+          ABOUT FRICTION
+        </p>
+
+        <h2>
+          Stories aren't<br>
+          meant to stay<br>
+          behind glass.
+        </h2>
+
+        <p>
+          Friction is an interactive collection of fictional worlds.
+          Choose a door, leave the screen behind, and explore.
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <!-- =========================================
+         THEME PANEL
+         ========================================= -->
+
+    <div
+      class="theme-panel"
+      id="themePanel"
+    >
+
+      <div class="theme-panel-inner">
+
+
+        <div class="theme-panel-header">
+
+          <span>
+            SELECT THEME
+          </span>
+
+          <button id="closeTheme">
+            CLOSE ×
+          </button>
+
+        </div>
+
+
+        <!-- DARK -->
+
+        <button
+          class="theme-option active"
+          data-theme="dark"
+        >
+
+          <span class="theme-preview theme-preview-dark"></span>
+
+          <span class="theme-option-text">
+
+            <strong>
+              DARK
+            </strong>
+
+            <small>
+              OBSIDIAN
+            </small>
+
+          </span>
+
+          <span class="theme-check">
+            ✓
+          </span>
+
+        </button>
+
+
+        <!-- LIGHT -->
+
+        <button
+          class="theme-option"
+          data-theme="light"
+        >
+
+          <span class="theme-preview theme-preview-light"></span>
+
+          <span class="theme-option-text">
+
+            <strong>
+              LIGHT
+            </strong>
+
+            <small>
+              IVORY
+            </small>
+
+          </span>
+
+          <span class="theme-check">
+            ✓
+          </span>
+
+        </button>
+
+
+        <!-- VENICE -->
+
+        <button
+          class="theme-option"
+          data-theme="venice"
+        >
+
+          <span class="theme-preview theme-preview-venice"></span>
+
+          <span class="theme-option-text">
+
+            <strong>
+              VENICE
+            </strong>
+
+            <small>
+              OCEANIC
+            </small>
+
+          </span>
+
+          <span class="theme-check">
+            ✓
+          </span>
+
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- =========================================
+         RETURN MESSAGE
+         ========================================= -->
+
+    <div
+      class="return-message"
+      id="returnMessage"
+    >
+
+      <div class="return-message-content">
+
+        <span
+          class="return-number"
+          id="returnNumber"
+        >
+          01
+        </span>
+
+
+        <p
+          class="return-text"
+          id="returnText"
+        >
+          YOU MADE IT OUT.
+        </p>
+
+
+        <span
+          class="return-show"
+          id="returnShow"
+        >
+          DEXTER
+        </span>
+
+      </div>
+
+    </div>
+
+
+  </div>
+
+
+
+  <!-- =========================================
+       MARVEL TRIBUTE
+       ========================================= -->
+
+  <div id="marvel-tribute">
+
+    <div class="marvel-video-wrapper">
+
+      <video
+        id="marvel-video"
+        playsinline
+        preload="auto"
+      >
+        <source
+          src="/videos/marvel-intro.mp4"
+          type="video/mp4"
+        >
+      </video>
+
+    </div>
+
+  <!-- =========================================
+       MAIN JAVASCRIPT
+       ========================================= -->
+
+  <script
+    type="module"
+    src="/src/main.js"
+  ></script>
+
+</body>
+
+</html>
