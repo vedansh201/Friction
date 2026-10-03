@@ -1,6 +1,5 @@
 import * as THREE from "three";
-import html2canvas from "html2canvas";
-
+import html2canvas from "html2canvas-pro";
 const container = document.getElementById("prism-container");
 
 if (container) {
@@ -20,9 +19,7 @@ if (container) {
     antialias: true
   });
 
-  renderer.setPixelRatio(
-    Math.min(window.devicePixelRatio, 2)
-  );
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
   renderer.setSize(
     window.innerWidth,
@@ -123,21 +120,13 @@ if (container) {
         vec3 normal =
           normalize(vNormal);
 
-        /*
-         * Surface angle.
-         * Faces looking away from the camera
-         * receive stronger distortion.
-         */
-
+        
         float edge =
           1.0 - abs(normal.z);
 
         float edgeStrength =
           pow(edge, 2.4);
 
-        /*
-         * Distortion direction.
-         */
 
         float edgeFactor =
           pow(1.0 - abs(normal.z), 1.4);
@@ -147,10 +136,7 @@ if (container) {
           uRefraction *
           (0.45 + edgeFactor * 2.8);
 
-        /*
-         * Slight chromatic separation.
-         */
-
+        
         vec2 redOffset =
           distortion *
           (1.0 + uDispersion);
@@ -162,9 +148,7 @@ if (container) {
           distortion *
           (1.0 - uDispersion);
 
-        /*
-         * Sample the captured landing page.
-         */
+        
 
         float r =
           texture2D(
@@ -187,9 +171,7 @@ if (container) {
         vec3 refracted =
           vec3(r, g, b);
 
-        /*
-         * Cool glass tint.
-         */
+        
 
         vec3 glassTint =
           vec3(
@@ -198,9 +180,7 @@ if (container) {
             1.0
           );
 
-        /*
-         * Edge reflection.
-         */
+        
 
         float sharpEdge =
           pow(edgeStrength, 3.5);
@@ -231,16 +211,13 @@ if (container) {
           sharpEdge *
           1.15;
 
-        // Add directional light to the glass face
+       
         reflected +=
           glassTint *
           faceHighlight *
           0.45;
 
-        // ========================================
-        // INTERNAL GLASS REFLECTION
-        // ========================================
-
+       
         float internalAngle =
           pow(
             1.0 - abs(normal.z),
@@ -302,11 +279,6 @@ if (container) {
           rimColor *
           rim *
           0.32;
-
-        /*
-         * Combine the background
-         * with the glass edge.
-         */
 
         vec3 finalColor =
           refracted * 0.78 +
@@ -429,9 +401,7 @@ if (container) {
     3
   );
 
-  scene.add(
-    secondaryLight
-  );
+  scene.add(secondaryLight);
 
   const topLight =
     new THREE.PointLight(
@@ -484,44 +454,25 @@ if (container) {
             captureCanvas
           );
 
-        captureTexture.colorSpace =
-          THREE.SRGBColorSpace;
-
-        captureTexture.minFilter =
-          THREE.LinearFilter;
-
-        captureTexture.magFilter =
-          THREE.LinearFilter;
-
-        captureTexture.generateMipmaps =
-          false;
-
-        material.uniforms.uTexture.value =
-          captureTexture;
-
+        captureTexture.colorSpace =THREE.SRGBColorSpace;
+        captureTexture.minFilter =THREE.LinearFilter;
+        captureTexture.magFilter =THREE.LinearFilter;
+        captureTexture.generateMipmaps =false;
+        material.uniforms.uTexture.value =captureTexture;
       } else {
 
-        captureTexture.image =
-          captureCanvas;
+        captureTexture.image =captureCanvas;
 
-        captureTexture.needsUpdate =
-          true;
+        captureTexture.needsUpdate =true;
       }
 
     } catch (error) {
-
       console.error(
         "Friction prism capture failed:",
         error
       );
 
     } finally {
-
-      /*
-       * IMPORTANT:
-       * Always show the prism again,
-       * even if html2canvas fails.
-       */
 
       if (prismContainer) {
         prismContainer.style.visibility =
@@ -531,10 +482,8 @@ if (container) {
   }
 
   capturePage();
-
   let mouseX = 0;
   let mouseY = 0;
-
   let targetMouseX = 0;
   let targetMouseY = 0;
 
@@ -544,51 +493,23 @@ if (container) {
     "mousemove",
     (event) => {
 
-      const x =
-        event.clientX;
-
-      const y =
-        event.clientY;
-
-      const areaLeft =
-        window.innerWidth *
-        0.45;
-
-      const areaRight =
-        window.innerWidth;
-
-      const areaTop =
-        window.innerHeight *
-        0.05;
-
-      const areaBottom =
-        window.innerHeight *
-        0.75;
-
+      const x =event.clientX;
+      const y =event.clientY;
+      const areaLeft =window.innerWidth *0.45;
+      const areaRight =window.innerWidth;
+      const areaTop =window.innerHeight *0.05;
+      const areaBottom =window.innerHeight *0.75;
       mouseInsidePrismArea =
         x >= areaLeft &&
         x <= areaRight &&
         y >= areaTop &&
         y <= areaBottom;
 
-      if (
-        mouseInsidePrismArea
-      ) {
+      if (mouseInsidePrismArea) {
 
-        targetMouseX =
-          (
-            (x - areaLeft) /
-            (areaRight - areaLeft)
-          ) * 2 - 1;
-
-        targetMouseY =
-          (
-            (y - areaTop) /
-            (areaBottom - areaTop)
-          ) * 2 - 1;
-
+        targetMouseX =((x - areaLeft) /(areaRight - areaLeft)) * 2 - 1;
+        targetMouseY =((y - areaTop) / (areaBottom - areaTop)) * 2 - 1;
       } else {
-
         targetMouseX = 0;
         targetMouseY = 0;
       }
@@ -597,38 +518,16 @@ if (container) {
 
   function animate() {
 
-    requestAnimationFrame(
-      animate
-    );
+    requestAnimationFrame(animate);
 
-    mouseX +=
-      (
-        targetMouseX -
-        mouseX
-      ) * 0.045;
+    mouseX +=(targetMouseX -mouseX) * 0.045;
 
-    mouseY +=
-      (
-        targetMouseY -
-        mouseY
-      ) * 0.045;
+    mouseY +=(targetMouseY -mouseY) * 0.045;
 
-    prismGroup.rotation.y =
-      mouseX * 0.55;
-
-    prismGroup.rotation.x =
-      mouseY * 0.35;
-
-    prismGroup.rotation.z =
-      mouseX * 0.08;
-
-    material.uniforms.uRefraction.value =
-      0.035 +
-      (
-        Math.abs(mouseX) +
-        Math.abs(mouseY)
-      ) * 0.012;
-
+    prismGroup.rotation.y =mouseX * 0.55;
+    prismGroup.rotation.x =mouseY * 0.35;
+    prismGroup.rotation.z =mouseX * 0.08;
+    material.uniforms.uRefraction.value =0.035 +(Math.abs(mouseX) +Math.abs(mouseY)) * 0.012;
     renderer.render(
       scene,
       camera
@@ -636,29 +535,21 @@ if (container) {
   }
 
   animate();
-
   window.addEventListener(
     "resize",
     () => {
-
-      camera.aspect =
-        window.innerWidth /
-        window.innerHeight;
-
+      camera.aspect = window.innerWidth /window.innerHeight;
       camera.updateProjectionMatrix();
-
       renderer.setSize(
         window.innerWidth,
         window.innerHeight
       );
-
       renderer.setPixelRatio(
         Math.min(
           window.devicePixelRatio,
           2
         )
       );
-
       capturePage();
     }
   );
