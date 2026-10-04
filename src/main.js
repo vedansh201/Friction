@@ -3,26 +3,20 @@ import "./style.css";
 import gsap from "gsap";
 
 const doors = document.querySelectorAll(".door");
-
 const transition = document.querySelector("#transition");
 const transitionTitle = document.querySelector("#transitionTitle");
 const transitionNumber = document.querySelector("#transitionNumber");
-
 const aboutButton = document.querySelector("#aboutButton");
 const aboutOverlay = document.querySelector("#aboutOverlay");
 const closeAbout = document.querySelector("#closeAbout");
-
 const themeButton = document.querySelector("#themeButton");
 const themePanel = document.querySelector("#themePanel");
 const closeTheme = document.querySelector("#closeTheme");
 const themeOptions = document.querySelectorAll(".theme-option");
-
 const cursorDot = document.querySelector(".cursor-dot");
 const cursorRing = document.querySelector(".cursor-ring");
-
 const openingScreen = document.querySelector("#openingScreen");
 const openingText = document.querySelector(".opening-content span");
-
 const returnMessage = document.querySelector("#returnMessage");
 const returnContent = document.querySelector(".return-message-content");
 const returnNumber = document.querySelector("#returnNumber");
@@ -31,24 +25,14 @@ const returnShow = document.querySelector("#returnShow");
 
 
 let isTransitioning = false;
-
-
 doors.forEach((door) => {
-
   const title = document.createElement("span");
-
   title.className = "door-title";
-
   title.textContent = door.dataset.show;
-
   door.appendChild(title);
 
 });
 
-
-/* =========================================================
-   THEME SYSTEM
-   ========================================================= */
 
 if (themeButton && themePanel) {
 
@@ -60,35 +44,25 @@ if (themeButton && themePanel) {
 
 }
 
-
 if (closeTheme && themePanel) {
-
   closeTheme.addEventListener("click", () => {
 
-    themePanel.classList.remove("active");
 
+    themePanel.classList.remove("active");
   });
 
 }
 
 
 if (themePanel) {
-
   themePanel.addEventListener("click", (event) => {
-
     if (event.target === themePanel) {
-
       themePanel.classList.remove("active");
-
     }
-
   });
-
 }
 
-
 themeOptions.forEach((option) => {
-
   option.addEventListener("click", () => {
 
     const selectedTheme = option.dataset.theme;
@@ -98,7 +72,6 @@ themeOptions.forEach((option) => {
 
 
     themeOptions.forEach((item) => {
-
       item.classList.remove("active");
 
     });
@@ -121,7 +94,6 @@ const savedTheme =
 
 
 if (savedTheme) {
-
   document.documentElement.dataset.theme =
     savedTheme;
 
@@ -140,11 +112,6 @@ if (savedTheme) {
     "dark";
 
 }
-
-
-/* =========================================================
-   CUSTOM CURSOR
-   ========================================================= */
 
 let mouseX = 0;
 let mouseY = 0;
@@ -175,11 +142,9 @@ window.addEventListener("mousemove", (event) => {
 
 function animateCursor() {
 
-  ringX +=
-    (mouseX - ringX) * 0.18;
+  ringX +=(mouseX - ringX) * 0.18;
 
-  ringY +=
-    (mouseY - ringY) * 0.18;
+  ringY +=(mouseY - ringY) * 0.18;
 
 
   if (cursorRing) {
@@ -228,8 +193,7 @@ document.addEventListener("mouseenter", () => {
 
 });
 
-window.history.scrollRestoration =
-  "manual";
+window.history.scrollRestoration ="manual";
 
 
 window.addEventListener("load", () => {
@@ -240,13 +204,9 @@ window.addEventListener("load", () => {
 
 window.addEventListener("mousemove", (event) => {
 
-  const x =
-    event.clientX -
-    window.innerWidth / 2;
+  const x =event.clientX -window.innerWidth / 2;
 
-  const y =
-    event.clientY -
-    window.innerHeight / 2;
+  const y =event.clientY -window.innerHeight / 2;
 
 
   document.documentElement.style.setProperty(
@@ -278,20 +238,15 @@ window.addEventListener("load", () => {
     }
   );
 
-
   const timeline =
     gsap.timeline();
-
-
   timeline
 
     .from(".navbar", {
 
       y: -20,
       opacity: 0,
-
       duration: 0.8,
-
       ease: "power3.out"
 
     })
@@ -300,9 +255,7 @@ window.addEventListener("load", () => {
 
       y: 15,
       opacity: 0,
-
       duration: 0.5,
-
       ease: "power3.out"
 
     }, "-=0.4")
@@ -311,20 +264,15 @@ window.addEventListener("load", () => {
 
       y: 35,
       opacity: 0,
-
       duration: 0.8,
-
       ease: "power4.out"
-
     }, "-=0.2")
 
     .from(".description", {
 
       y: 15,
       opacity: 0,
-
       duration: 0.6,
-
       ease: "power3.out"
 
     }, "-=0.4")
@@ -333,11 +281,10 @@ window.addEventListener("load", () => {
 
       y: 30,
       opacity: 0,
-
       duration: 0.7,
-
       stagger: 0.06,
 
+      
       ease: "power3.out"
 
     }, "-=0.25")
@@ -345,7 +292,6 @@ window.addEventListener("load", () => {
     .from(".footer", {
 
       opacity: 0,
-
       duration: 0.5
 
     }, "-=0.35");
@@ -358,20 +304,14 @@ window.addEventListener("load", () => {
   if (!openingScreen || !openingText) {
     return;
   }
-
   const openingTimeline =
     gsap.timeline();
-
-
   openingTimeline
-
     .to(openingText, {
 
       opacity: 1,
       y: 0,
-
       duration: 1,
-
       ease: "power3.out"
 
     })
@@ -400,7 +340,6 @@ window.addEventListener("load", () => {
 });
 
 doors.forEach((door) => {
-
   door.addEventListener("mouseenter", () => {
     if (isTransitioning) {return;}
     gsap.to(door, {
@@ -421,15 +360,8 @@ doors.forEach((door) => {
       );
     }
 
-    if (cursorRing) {
-      cursorRing.classList.add(
-        "cursor-ring-active"
-      );
-    }
-    if (cursorDot) {
-      cursorDot.classList.add(
-        "cursor-dot-active"
-      );
+    if (cursorRing) {cursorRing.classList.add("cursor-ring-active");}
+    if (cursorDot) {cursorDot.classList.add("cursor-dot-active");
 
     }
 
@@ -479,10 +411,8 @@ doors.forEach((door, index) => {
       transitionTitle.textContent =
         showName.toUpperCase();
     }
-
     if (transitionNumber) {
-      transitionNumber.textContent =
-        number;
+      transitionNumber.textContent =number;
     }
     gsap.set(
       ".transition-content",
@@ -679,8 +609,7 @@ function showRoomExit(showName) {
     opacity: 0,
     y: 30
   });
-  const timeline =
-    gsap.timeline();
+  const timeline =gsap.timeline();
 
   timeline
 
@@ -736,7 +665,6 @@ document.addEventListener("keydown", (event) => {
     themePanel.classList.contains("active")
   ) {
     themePanel.classList.remove("active");
-
   }
 
   if (
@@ -747,11 +675,8 @@ document.addEventListener("keydown", (event) => {
       opacity: 0,
       duration: 0.4,
       onComplete: () => {
-        aboutOverlay.style.visibility =
-          "hidden";
-        aboutOverlay.style.pointerEvents =
-          "none";
-
+        aboutOverlay.style.visibility ="hidden";
+        aboutOverlay.style.pointerEvents ="none";
       }
     });
   }
@@ -762,7 +687,6 @@ const marvelTribute = document.getElementById("marvel-tribute");
 const marvelVideo = document.getElementById("marvel-video");
 const marvelVideoWrapper = document.querySelector(".marvel-video-wrapper");
 
-// Make absolutely sure the tribute is outside #app.
 if (marvelTribute) {
   document.body.appendChild(marvelTribute);
 }
@@ -775,23 +699,15 @@ async function playMarvelTribute() {
   marvelShown = true;
 
   document.body.classList.add("marvel-active");
-
-  // Show the overlay first.
   marvelTribute.style.visibility = "visible";
   marvelTribute.style.pointerEvents = "auto";
-
-  // Always start from the beginning.
   marvelVideo.currentTime = 0;
   marvelVideo.pause();
-
-  // Fade in the black overlay.
   gsap.to(marvelTribute, {
     opacity: 1,
     duration: 0.8,
     ease: "power2.out"
   });
-
-  // Bring the video container in.
   gsap.fromTo(
     marvelVideoWrapper,
     {
@@ -846,11 +762,6 @@ marvelVideo?.addEventListener("ended", () => {
 
 });
 
-
-// =========================================
-// ACTIVE TIME TRACKER
-// =========================================
-
 if (!sessionStorage.getItem("frictionMarvelShown")) {
 
   let activeTime = 0;
@@ -865,9 +776,6 @@ if (!sessionStorage.getItem("frictionMarvelShown")) {
     if (!document.hidden && !marvelShown) {
 
       activeTime += delta;
-
-      // 5 seconds for testing.
-      // Change back to 60000 for 1 minute.
       if (activeTime >= 60000) {
         sessionStorage.setItem(
           "frictionMarvelShown",
@@ -914,8 +822,6 @@ function unlockMarvelAudio() {
       });
   }
 }
-
-// Listen for the user's first interaction with Friction.
 document.addEventListener("pointerdown", unlockMarvelAudio, {
   once: true
 });

@@ -27,7 +27,6 @@ if (container) {
   );
 
   renderer.outputColorSpace = THREE.SRGBColorSpace;
-
   container.appendChild(renderer.domElement);
 
   const prismGroup = new THREE.Group();
@@ -44,11 +43,13 @@ if (container) {
     0
   );
 
+  
   scene.add(prismGroup);
 
   const refractionTexture = new THREE.Texture();
 
-  refractionTexture.colorSpace = THREE.SRGBColorSpace;
+  re
+  fractionTexture.colorSpace = THREE.SRGBColorSpace;
 
   const geometry = new THREE.CylinderGeometry(
     1.35,
@@ -57,24 +58,12 @@ if (container) {
     3,
     1
   );
-
   const material = new THREE.ShaderMaterial({
     uniforms: {
-      uTexture: {
-        value: refractionTexture
-      },
-
-      uRefraction: {
-        value: 0.075
-      },
-
-      uOpacity: {
-        value: 0.62
-      },
-
-      uDispersion: {
-        value: 0.035
-      }
+      uTexture: {value: refractionTexture},
+      uRefraction: {value: 0.075},
+      uOpacity: {value: 0.62},
+      uDispersion: {value: 0.035}
     },
 
     vertexShader: `
@@ -148,8 +137,6 @@ if (container) {
           distortion *
           (1.0 - uDispersion);
 
-        
-
         float r =
           texture2D(
             uTexture,
@@ -161,7 +148,6 @@ if (container) {
             uTexture,
             vScreenUv + greenOffset
           ).g;
-
         float b =
           texture2D(
             uTexture,
@@ -184,7 +170,6 @@ if (container) {
 
         float sharpEdge =
           pow(edgeStrength, 3.5);
-
         vec3 lightDirection =
           normalize(
             vec3(
@@ -340,21 +325,17 @@ if (container) {
       innerGeometry,
       innerMaterial
     );
-
   innerPrism.rotation.x = Math.PI / 2;
-
   prismGroup.add(innerPrism);
 
   const edges =
     new THREE.EdgesGeometry(geometry);
-
   const edgeMaterial =
     new THREE.LineBasicMaterial({
       color: 0xffffff,
       transparent: true,
       opacity: 0.38
     });
-
   const edgeLines =
     new THREE.LineSegments(
       edges,
@@ -370,16 +351,13 @@ if (container) {
       0xffffff,
       0.45
     );
-
   scene.add(ambientLight);
-
   const keyLight =
     new THREE.PointLight(
       0xd9efff,
       18,
       14
     );
-
   keyLight.position.set(
     3,
     2,
@@ -387,7 +365,6 @@ if (container) {
   );
 
   scene.add(keyLight);
-
   const secondaryLight =
     new THREE.PointLight(
       0xffffff,
@@ -402,14 +379,12 @@ if (container) {
   );
 
   scene.add(secondaryLight);
-
   const topLight =
     new THREE.PointLight(
       0x6ea8ff,
       5,
       8
     );
-
   topLight.position.set(
     0,
     4,
@@ -417,21 +392,14 @@ if (container) {
   );
 
   scene.add(topLight);
-
   let captureCanvas = null;
   let captureTexture = null;
-
   async function capturePage() {
-
-    const prismContainer =
-      document.getElementById("prism-container");
-
+    const prismContainer =document.getElementById("prism-container");
     try {
-
       if (prismContainer) {
         prismContainer.style.visibility = "hidden";
       }
-
       captureCanvas =
         await html2canvas(
           document.body,
@@ -446,49 +414,39 @@ if (container) {
             logging: false
           }
         );
-
       if (!captureTexture) {
 
         captureTexture =
           new THREE.CanvasTexture(
             captureCanvas
           );
-
         captureTexture.colorSpace =THREE.SRGBColorSpace;
         captureTexture.minFilter =THREE.LinearFilter;
         captureTexture.magFilter =THREE.LinearFilter;
         captureTexture.generateMipmaps =false;
         material.uniforms.uTexture.value =captureTexture;
       } else {
-
         captureTexture.image =captureCanvas;
-
         captureTexture.needsUpdate =true;
       }
-
     } catch (error) {
       console.error(
         "Friction prism capture failed:",
         error
       );
-
     } finally {
-
       if (prismContainer) {
         prismContainer.style.visibility =
           "visible";
       }
     }
   }
-
   capturePage();
   let mouseX = 0;
   let mouseY = 0;
   let targetMouseX = 0;
   let targetMouseY = 0;
-
   let mouseInsidePrismArea = false;
-
   window.addEventListener(
     "mousemove",
     (event) => {
@@ -506,7 +464,6 @@ if (container) {
         y <= areaBottom;
 
       if (mouseInsidePrismArea) {
-
         targetMouseX =((x - areaLeft) /(areaRight - areaLeft)) * 2 - 1;
         targetMouseY =((y - areaTop) / (areaBottom - areaTop)) * 2 - 1;
       } else {
@@ -519,11 +476,8 @@ if (container) {
   function animate() {
 
     requestAnimationFrame(animate);
-
     mouseX +=(targetMouseX -mouseX) * 0.045;
-
     mouseY +=(targetMouseY -mouseY) * 0.045;
-
     prismGroup.rotation.y =mouseX * 0.55;
     prismGroup.rotation.x =mouseY * 0.35;
     prismGroup.rotation.z =mouseX * 0.08;
@@ -533,7 +487,6 @@ if (container) {
       camera
     );
   }
-
   animate();
   window.addEventListener(
     "resize",
