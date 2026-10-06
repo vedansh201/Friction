@@ -48,8 +48,7 @@ if (container) {
 
   const refractionTexture = new THREE.Texture();
 
-  re
-  fractionTexture.colorSpace = THREE.SRGBColorSpace;
+  refractionTexture.colorSpace = THREE.SRGBColorSpace;
 
   const geometry = new THREE.CylinderGeometry(
     1.35,
@@ -306,7 +305,6 @@ if (container) {
       3,
       1
     );
-
   const innerMaterial =
     new THREE.MeshPhysicalMaterial({
       color: 0xffffff,
@@ -336,14 +334,14 @@ if (container) {
       transparent: true,
       opacity: 0.38
     });
-  const edgeLines =
+
+    const edgeLines =
     new THREE.LineSegments(
       edges,
       edgeMaterial
     );
 
   edgeLines.rotation.x = Math.PI / 2;
-
   prismGroup.add(edgeLines);
 
   const ambientLight =
@@ -371,6 +369,8 @@ if (container) {
       7,
       10
     );
+
+
 
   secondaryLight.position.set(
     -3,
@@ -474,7 +474,6 @@ if (container) {
   );
 
   function animate() {
-
     requestAnimationFrame(animate);
     mouseX +=(targetMouseX -mouseX) * 0.045;
     mouseY +=(targetMouseY -mouseY) * 0.045;
