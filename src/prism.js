@@ -1,54 +1,42 @@
-import * as THREE from "three";
-import html2canvas from "html2canvas-pro";
-const container = document.getElementById("prism-container");
+import * as THREE from 'three';
+import html2canvas from 'html2canvas-pro';
 
-if (container) {
+const container = document.getElementById('prism-container');
+const motion = matchMedia('(prefers-reduced-motion: reduce)');
+
+function initializePrism() {
+  if (!container || motion.matches) return;
+
+  let renderer;
+
+  try {
+    renderer = new THREE.WebGLRenderer({
+      alpha: true,
+      antialias: true
+    });
+  } catch {
+    container.hidden = true;
+    return;
+  }
+
   const scene = new THREE.Scene();
 
-  const camera = new THREE.PerspectiveCamera(
-    45,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    100
-  );
+  const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 100);
 
   camera.position.set(0, 0, 6);
 
-  const renderer = new THREE.WebGLRenderer({
-    alpha: true,
-    antialias: true
-  });
-
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-  renderer.setSize(
-    window.innerWidth,
-    window.innerHeight
-  );
-
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setSize(innerWidth, innerHeight);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
+
   container.appendChild(renderer.domElement);
 
-  const prismGroup = new THREE.Group();
+  const group = new THREE.Group();
 
-  prismGroup.scale.set(
-    0.62,
-    0.62,
-    0.62
-  );
+  group.scale.setScalar(0.62);
+  group.position.set(2.8, 0.8, 0);
 
-  prismGroup.position.set(
-    2.8,
-    0.8,
-    0
-  );
-
-  
-  scene.add(prismGroup);
-
-  const refractionTexture = new THREE.Texture();
-
-  refractionTexture.colorSpace = THREE.SRGBColorSpace;
+  scene.add(group);
 
   const geometry = new THREE.CylinderGeometry(
     1.35,
@@ -57,229 +45,77 @@ if (container) {
     3,
     1
   );
+
   const material = new THREE.ShaderMaterial({
     uniforms: {
-      uTexture: {value: refractionTexture},
-      uRefraction: {value: 0.075},
-      uOpacity: {value: 0.62},
-      uDispersion: {value: 0.035}
+      uResolution: { value: new THREE.Vector2() },
+      uTexture: { value: null },
+      uRefraction: { value: 0.035 },
+      uOpacity: { value: 0.62 },
+      uDispersion: { value: 0.035 }
     },
 
     vertexShader: `
-      varying vec2 vScreenUv;
       varying vec3 vNormal;
 
       void main() {
+        vNormal = normalize(normalMatrix * normal);
 
-        vNormal =
-          normalize(
-            normalMatrix * normal
-          );
-
-        vec4 clipPosition =
-          projectionMatrix *
-          modelViewMatrix *
-          vec4(position, 1.0);
-
-        gl_Position =
-          clipPosition;
-
-        vScreenUv =
-          clipPosition.xy /
-          clipPosition.w;
-
-        vScreenUv =
-          vScreenUv * 0.5 + 0.5;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
       }
     `,
 
     fragmentShader: `
-      varying vec2 vScreenUv;
       varying vec3 vNormal;
 
       uniform sampler2D uTexture;
-
+      uniform vec2 uResolution;
       uniform float uRefraction;
       uniform float uOpacity;
       uniform float uDispersion;
 
       void main() {
+        vec3 normal = normalize(vNormal);
+        vec2 uv = gl_FragCoord.xy / uResolution;
 
-        vec3 normal =
-          normalize(vNormal);
+        float edge = clamp(
+          1.0 - abs(normal.z),
+          0.0,
+          1.0
+        );
 
-        
-        float edge =
-          1.0 - abs(normal.z);
+        vec2 distortion = normal.xy * uRefraction * (0.45 + pow(edge, 1.4) * 2.8);
 
-        float edgeStrength =
-          pow(edge, 2.4);
+        distortion.x *= uResolution.y / uResolution.x;
 
+        vec2 margin = vec2(0.5) / uResolution;
 
-        float edgeFactor =
-          pow(1.0 - abs(normal.z), 1.4);
+        vec2 redUV = clamp(uv + distortion * (1.0 + uDispersion), margin, 1.0 - margin);
 
-        vec2 distortion =
-          normal.xy *
-          uRefraction *
-          (0.45 + edgeFactor * 2.8);
+        vec2 greenUV = clamp(uv + distortion, margin, 1.0 - margin);
 
-        
-        vec2 redOffset =
-          distortion *
-          (1.0 + uDispersion);
+        vec2 blueUV = clamp(uv + distortion * (1.0 - uDispersion), margin,1.0 - margin);
 
-        vec2 greenOffset =
-          distortion;
+        vec3 refracted = vec3(
+          texture2D(uTexture, redUV).r,
+          texture2D(uTexture, greenUV).g,
+          texture2D(uTexture, blueUV).b
+        );
 
-        vec2 blueOffset =
-          distortion *
-          (1.0 - uDispersion);
+        refracted = sRGBTransferEOTF(vec4(refracted, 1.0)).rgb;
 
-        float r =
-          texture2D(
-            uTexture,
-            vScreenUv + redOffset
-          ).r;
+        float face = max(dot(normal, normalize(vec3(-0.45, 0.55, 1.0))), 0.0);
 
-        float g =
-          texture2D(
-            uTexture,
-            vScreenUv + greenOffset
-          ).g;
-        float b =
-          texture2D(
-            uTexture,
-            vScreenUv + blueOffset
-          ).b;
+        vec3 reflection = vec3(0.78, 0.92, 1.0) * ( pow(edge, 8.4) * 0.3 + pow(face, 2.5) * 0.09);
 
-        vec3 refracted =
-          vec3(r, g, b);
+        float rim = pow(edge, 4.0);
 
-        
+        reflection += vec3(0.55, 0.82, 1.0) * rim * 0.12;
 
-        vec3 glassTint =
-          vec3(
-            0.78,
-            0.92,
-            1.0
-          );
+        gl_FragColor = vec4(refracted + reflection, uOpacity);
 
-        
-
-        float sharpEdge =
-          pow(edgeStrength, 3.5);
-        vec3 lightDirection =
-          normalize(
-            vec3(
-              -0.45,
-              0.55,
-              1.0
-            )
-          );
-
-        float faceLight =
-          max(
-            dot(normal, lightDirection),
-            0.0
-          );
-
-        float faceHighlight =
-          pow(
-            faceLight,
-            2.5
-          );
-
-        vec3 reflected =
-          glassTint *
-          sharpEdge *
-          1.15;
-
-       
-        reflected +=
-          glassTint *
-          faceHighlight *
-          0.45;
-
-       
-        float internalAngle =
-          pow(
-            1.0 - abs(normal.z),
-            1.5
-          );
-
-        float internalGlow =
-          sin(
-            (normal.x + normal.y) * 5.0
-          ) * 0.5 + 0.5;
-
-        vec3 internalColor =
-          vec3(
-            0.72,
-            0.88,
-            1.0
-          );
-
-        reflected +=
-          internalColor *
-          internalAngle *
-          internalGlow *
-          0.16;
-
-        float silhouette =
-          pow(
-            1.0 - abs(normal.z),
-            6.0
-          );
-
-        reflected +=
-          vec3(
-            0.85,
-            0.95,
-            1.0
-          ) *
-          silhouette *
-          0.35;
-
-        float rim =
-          pow(
-            1.0 - abs(
-              dot(
-                normal,
-                vec3(0.0, 0.0, 1.0)
-              )
-            ),
-            4.0
-          );
-
-        vec3 rimColor =
-          vec3(
-            0.55,
-            0.82,
-            1.0
-          );
-
-        reflected +=
-          rimColor *
-          rim *
-          0.32;
-
-        vec3 finalColor =
-          refracted * 0.78 +
-          reflected;
-
-        float alpha =
-          uOpacity *
-          (
-            0.35 +
-            edgeStrength * 0.65
-          );
-
-        gl_FragColor =
-          vec4(
-            finalColor,
-            alpha
-          );
+        #include <tonemapping_fragment>
+        #include <colorspace_fragment>
       }
     `,
 
@@ -288,221 +124,323 @@ if (container) {
     depthWrite: false
   });
 
-  const prism = new THREE.Mesh(
-    geometry,
-    material
-  );
+  const prism = new THREE.Mesh(geometry, material);
 
   prism.rotation.x = Math.PI / 2;
+  group.add(prism);
 
-  prismGroup.add(prism);
+  const edges = new THREE.EdgesGeometry(geometry);
 
-  const innerGeometry =
-    new THREE.CylinderGeometry(
-      1.12,
-      1.12,
-      3.05,
-      3,
-      1
-    );
-  const innerMaterial =
-    new THREE.MeshPhysicalMaterial({
-      color: 0xffffff,
-      transparent: true,
-      opacity: 0.015,
-      transmission: 1,
-      roughness: 0,
-      thickness: 1.2,
-      ior: 1.5,
-      side: THREE.DoubleSide,
-      depthWrite: false
-    });
+  const edgeMaterial = new THREE.LineBasicMaterial({
+    color: 0xffffff,
+    transparent: true,
+    opacity: 0.38
+  });
 
-  const innerPrism =
-    new THREE.Mesh(
-      innerGeometry,
-      innerMaterial
-    );
-  innerPrism.rotation.x = Math.PI / 2;
-  prismGroup.add(innerPrism);
-
-  const edges =
-    new THREE.EdgesGeometry(geometry);
-  const edgeMaterial =
-    new THREE.LineBasicMaterial({
-      color: 0xffffff,
-      transparent: true,
-      opacity: 0.38
-    });
-
-    const edgeLines =
-    new THREE.LineSegments(
-      edges,
-      edgeMaterial
-    );
-
-  edgeLines.rotation.x = Math.PI / 2;
-  prismGroup.add(edgeLines);
-
-  const ambientLight =
-    new THREE.AmbientLight(
-      0xffffff,
-      0.45
-    );
-  scene.add(ambientLight);
-  const keyLight =
-    new THREE.PointLight(
-      0xd9efff,
-      18,
-      14
-    );
-  keyLight.position.set(
-    3,
-    2,
-    4
+  const lines = new THREE.LineSegments(
+    edges,
+    edgeMaterial
   );
 
-  scene.add(keyLight);
-  const secondaryLight =
-    new THREE.PointLight(
-      0xffffff,
-      7,
-      10
-    );
+  lines.rotation.x = Math.PI / 2;
+  group.add(lines);
 
+  let texture;
+  let capturing = false;
+  let pendingCapture = false;
+  let captureTimer;
+  let disposed = false;
+  let frame;
 
+  let x = 0;
+  let y = 0;
+  let targetX = 0;
+  let targetY = 0;
 
-  secondaryLight.position.set(
-    -3,
-    -1,
-    3
-  );
+  group.visible = false;
 
-  scene.add(secondaryLight);
-  const topLight =
-    new THREE.PointLight(
-      0x6ea8ff,
-      5,
-      8
-    );
-  topLight.position.set(
-    0,
-    4,
-    2
-  );
-
-  scene.add(topLight);
-  let captureCanvas = null;
-  let captureTexture = null;
   async function capturePage() {
-    const prismContainer =document.getElementById("prism-container");
-    try {
-      if (prismContainer) {
-        prismContainer.style.visibility = "hidden";
-      }
-      captureCanvas =
-        await html2canvas(
-          document.body,
-          {
-            backgroundColor: null,
-            scale: Math.min(
-              window.devicePixelRatio,
-              1.5
-            ),
-            useCORS: true,
-            allowTaint: false,
-            logging: false
-          }
-        );
-      if (!captureTexture) {
+    if (disposed || document.hidden || motion.matches) return;
 
-        captureTexture =
-          new THREE.CanvasTexture(
-            captureCanvas
-          );
-        captureTexture.colorSpace =THREE.SRGBColorSpace;
-        captureTexture.minFilter =THREE.LinearFilter;
-        captureTexture.magFilter =THREE.LinearFilter;
-        captureTexture.generateMipmaps =false;
-        material.uniforms.uTexture.value =captureTexture;
+    if (capturing) {
+      pendingCapture = true;
+      return;
+    }
+
+    capturing = true;
+
+    try {
+      const canvas = await html2canvas(document.body, {
+        backgroundColor: getComputedStyle(document.body).backgroundColor,
+
+        scale: 1,
+        useCORS: true,
+        allowTaint: false,
+        logging: false,
+
+        width: innerWidth,
+        height: innerHeight,
+
+        x: scrollX,
+        y: scrollY,
+        scrollX,
+        scrollY,
+
+        windowWidth: innerWidth,
+        windowHeight: innerHeight,
+        imageTimeout: 5000,
+
+        ignoreElements: (element) =>
+          [
+            'prism-container',
+            'openingScreen',
+            'themePanel',
+            'transition',
+            'returnMessage',
+            'marvel-tribute'
+          ].includes(element.id) ||
+          element.classList.contains('cursor-dot') ||
+          element.classList.contains('cursor-ring'),
+
+        onclone: (document) => {
+          const style = document.createElement('style');
+
+          style.textContent = `
+            * {
+              animation: none !important;
+              transition: none !important;
+            }
+          `;
+
+          document.head.appendChild(style);
+
+          document.querySelectorAll(
+            '.navbar, .intro, .eyebrow, .intro h1, .description, .door, .footer'
+          ).forEach((element) => {
+            element.style.opacity = '1';
+            element.style.transform = 'none';
+          });
+        }
+      });
+
+      if (disposed) return;
+
+      if (!texture) {
+        texture = new THREE.CanvasTexture(canvas);
+        texture.colorSpace = THREE.SRGBColorSpace;
+        texture.minFilter = THREE.LinearFilter;
+        texture.magFilter = THREE.LinearFilter;
+        texture.generateMipmaps = false;
+
+        material.uniforms.uTexture.value = texture;
       } else {
-        captureTexture.image =captureCanvas;
-        captureTexture.needsUpdate =true;
+        texture.image = canvas;
+        texture.needsUpdate = true;
       }
+
+      group.visible = true;
     } catch (error) {
-      console.error(
-        "Friction prism capture failed:",
+      console.warn(
+        'Friction prism capture unavailable:',
         error
       );
     } finally {
-      if (prismContainer) {
-        prismContainer.style.visibility =
-          "visible";
+      capturing = false;
+
+      if (pendingCapture) {
+        pendingCapture = false;
+        scheduleCapture();
       }
     }
   }
-  capturePage();
-  let mouseX = 0;
-  let mouseY = 0;
-  let targetMouseX = 0;
-  let targetMouseY = 0;
-  let mouseInsidePrismArea = false;
-  window.addEventListener(
-    "mousemove",
-    (event) => {
 
-      const x =event.clientX;
-      const y =event.clientY;
-      const areaLeft =window.innerWidth *0.45;
-      const areaRight =window.innerWidth;
-      const areaTop =window.innerHeight *0.05;
-      const areaBottom =window.innerHeight *0.75;
-      mouseInsidePrismArea =
-        x >= areaLeft &&
-        x <= areaRight &&
-        y >= areaTop &&
-        y <= areaBottom;
+  function scheduleCapture() {
+    clearTimeout(captureTimer);
+    captureTimer = setTimeout(capturePage, 850);
+  }
 
-      if (mouseInsidePrismArea) {
-        targetMouseX =((x - areaLeft) /(areaRight - areaLeft)) * 2 - 1;
-        targetMouseY =((y - areaTop) / (areaBottom - areaTop)) * 2 - 1;
-      } else {
-        targetMouseX = 0;
-        targetMouseY = 0;
-      }
-    }
-  );
+  function onPointer(event) {
+    const left = innerWidth * 0.45;
+    const top = innerHeight * 0.05;
+
+    const inside =
+      event.clientX >= left &&
+      event.clientY >= top &&
+      event.clientY <= innerHeight * 0.75;
+
+    targetX = inside
+      ? ((event.clientX - left) / (innerWidth - left)) * 2 - 1
+      : 0;
+
+    targetY = inside
+      ? ((event.clientY - top) / (innerHeight * 0.7)) * 2 - 1
+      : 0;
+  }
 
   function animate() {
-    requestAnimationFrame(animate);
-    mouseX +=(targetMouseX -mouseX) * 0.045;
-    mouseY +=(targetMouseY -mouseY) * 0.045;
-    prismGroup.rotation.y =mouseX * 0.55;
-    prismGroup.rotation.x =mouseY * 0.35;
-    prismGroup.rotation.z =mouseX * 0.08;
-    material.uniforms.uRefraction.value =0.035 +(Math.abs(mouseX) +Math.abs(mouseY)) * 0.012;
-    renderer.render(
-      scene,
-      camera
-    );
-  }
-  animate();
-  window.addEventListener(
-    "resize",
-    () => {
-      camera.aspect = window.innerWidth /window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(
-        window.innerWidth,
-        window.innerHeight
-      );
-      renderer.setPixelRatio(
-        Math.min(
-          window.devicePixelRatio,
-          2
-        )
-      );
-      capturePage();
+    if (disposed || document.hidden || motion.matches) {
+      frame = null;
+      return;
     }
+
+    x += (targetX - x) * 0.045;
+    y += (targetY - y) * 0.045;
+
+    group.rotation.set(
+      y * 0.35,
+      x * 0.55,
+      x * 0.08
+    );
+
+    material.uniforms.uRefraction.value = 0.035 + (Math.abs(x) + Math.abs(y)) * 0.012;
+
+    renderer.render(scene, camera);
+    frame = requestAnimationFrame(animate);
+  }
+
+  function resume() {
+    if (frame != null) cancelAnimationFrame(frame);
+    frame = null;
+
+    if (!document.hidden && !motion.matches) {
+      animate();
+      scheduleCapture();
+    }
+  }
+
+  function resize() {
+    camera.aspect = innerWidth / innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+
+    renderer.setSize(innerWidth, innerHeight);
+
+    renderer.getDrawingBufferSize(material.uniforms.uResolution.value);
+
+    const height = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) *camera.position.z;
+
+    const width = height * camera.aspect;
+
+    group.scale.setScalar(Math.min(0.62, width * 0.16));
+
+    group.position.set(
+      width * 0.24,
+      height * 0.18,
+      0
+    );
+
+    scheduleCapture();
+  }
+
+  renderer.domElement.addEventListener(
+    'webglcontextlost',
+    (event) => {
+      event.preventDefault();
+      dispose();
+    },
+    { once: true }
   );
+
+  function dispose() {
+    if (disposed) return;
+    disposed = true;
+
+    themeObserver.disconnect();
+
+    cancelAnimationFrame(frame);
+    clearTimeout(captureTimer);
+
+    window.removeEventListener('pointermove', onPointer);
+    window.removeEventListener('resize', resize);
+    window.removeEventListener('scroll', scheduleCapture);
+
+    document.removeEventListener(
+      'visibilitychange',
+      resume
+    );
+
+    document.removeEventListener(
+      'friction:themechange',
+      scheduleCapture
+    );
+
+    document.removeEventListener(
+      'friction:ready',
+      scheduleCapture
+    );
+
+    motion.removeEventListener('change', resume);
+
+    geometry.dispose();
+    edges.dispose();
+  
+    material.dispose();
+    edgeMaterial.dispose();
+    texture?.dispose();
+
+    renderer.dispose();
+    renderer.domElement.remove();
+  }
+
+  window.addEventListener(
+    'pointermove',
+    onPointer,
+    { passive: true }
+  );
+
+  window.addEventListener('resize', resize);
+
+
+
+  window.addEventListener(
+    'scroll',
+    scheduleCapture,
+    { passive: true }
+  );
+
+  document.addEventListener(
+    'visibilitychange',
+    resume
+  );
+
+  document.addEventListener(
+    'friction:themechange',
+    scheduleCapture
+  );
+
+  document.addEventListener(
+    'friction:ready',
+    scheduleCapture
+  );
+
+  motion.addEventListener('change', resume);
+
+  document.querySelectorAll('.door img').forEach((image) => {
+    if (!image.complete) {
+      image.addEventListener(
+        'load',
+        scheduleCapture,
+        { once: true }
+      );
+    }
+  });
+
+  document.fonts?.ready.then(scheduleCapture);
+
+  const themeObserver = new MutationObserver(scheduleCapture);
+
+  themeObserver.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-theme']
+  });
+
+  if (import.meta.hot) {import.meta.hot.dispose(dispose);}
+
+  resize();
+  animate();
+
+  setTimeout(scheduleCapture, 3000);
 }
+
+initializePrism();

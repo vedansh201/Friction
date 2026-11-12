@@ -1,26 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta
+    name="description"
+    content="Friction — an interactive collection inspired by your favourite fictional worlds."
+  >
 
   <title>Friction</title>
 
-  <link
-    rel="icon"
-    type="image/png"
-    href="/friction-logo.png"
-  >
-
+  <link rel="icon" type="image/png" href="/friction-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-
-  <link
-    rel="preconnect"
-    href="https://fonts.gstatic.com"
-    crossorigin
-  >
-
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@500;600&display=swap"
     rel="stylesheet"
@@ -28,392 +20,306 @@
 </head>
 
 <body>
-
   <div
     class="opening-screen"
     id="openingScreen"
+    aria-hidden="true"
+    data-html2canvas-ignore
   >
     <div class="opening-content">
       <span>FRICTION</span>
     </div>
   </div>
 
-  <div class="cursor-dot"></div>
-  <div class="cursor-ring"></div>
+  <div class="cursor-dot" aria-hidden="true" data-html2canvas-ignore></div>
+  <div class="cursor-ring" aria-hidden="true" data-html2canvas-ignore></div>
 
   <div id="app">
-    <div class="background">
-      <div id="prism-container"></div>
+    <div class="background" aria-hidden="true">
+      <div id="prism-container" data-html2canvas-ignore></div>
       <div class="grain"></div>
       <div class="glow glow-one"></div>
       <div class="glow glow-two"></div>
-
     </div>
 
     <header class="navbar">
+      <div class="logo">FRICTION</div>
 
-      <div class="logo">
-        FRICTION
-      </div>
+      <nav class="nav-right" aria-label="Main navigation">
+        <span>ENTER A STORY</span>
 
-      <div class="nav-right">
-        <span>
-          ENTER A STORY
-        </span>
-        <button id="themeButton">
+        <button
+          id="themeButton"
+          type="button"
+          aria-haspopup="dialog"
+          aria-controls="themePanel"
+        >
           THEME
         </button>
-        <button id="aboutButton">
-          ABOUT
-        </button>
-      </div>
+        
+      </nav>
     </header>
+
     <main class="landing">
-      <section class="intro">
-        <p class="eyebrow">
-          AN INTERACTIVE COLLECTION
-        </p>
-        <h1>
+      <section class="intro" aria-labelledby="introTitle">
+        <p class="eyebrow">AN INTERACTIVE COLLECTION</p>
+
+        <h1 id="introTitle">
           Step into<br>
           <span>the story.</span>
         </h1>
+
         <p class="description">
           Don't watch from the outside.
           Enter the worlds you already know.
         </p>
       </section>
+
       <section
         class="doors"
         id="doors"
+        aria-label="Choose a story — rooms coming soon"
       >
         <button
+          type="button"
           class="door"
           data-show="Dexter"
           data-number="01"
+          aria-label="Dexter — coming soon"
         >
-          <span class="door-number">
-            01
+          <span class="door-number">01</span>
+          <span class="door-image">
+            <img src="/images/shows/dexter.jpg" alt="" decoding="async">
           </span>
-          <div class="door-image">
-            <img
-              src="/images/shows/dexter.jpg"
-              alt="Dexter"
-            >
-          </div>
+          <span class="door-title">Dexter</span>
         </button>
+
         <button
+          type="button"
           class="door"
           data-show="Friends"
           data-number="02"
+          aria-label="Friends — coming soon"
         >
-          <span class="door-number">
-            02
+          <span class="door-number">02</span>
+          <span class="door-image">
+            <img src="/images/shows/friends.jpg" alt="" decoding="async">
           </span>
-          <div class="door-image">
-
-            <img
-              src="/images/shows/friends.jpg"
-              alt="Friends"
-            >
-
-          </div>
+          <span class="door-title">Friends</span>
         </button>
 
         <button
+          type="button"
           class="door"
           data-show="How I Met Your Mother"
           data-number="03"
+          aria-label="How I Met Your Mother — coming soon"
         >
-          <span class="door-number">
-            03
+          <span class="door-number">03</span>
+          <span class="door-image">
+            <img src="/images/shows/himym.jpg" alt="" decoding="async">
           </span>
-          <div class="door-image">
-            <img
-              src="/images/shows/himym.jpg"
-              alt="How I Met Your Mother"
-            >
-
-          </div>
+          <span class="door-title">How I Met Your Mother</span>
         </button>
+
         <button
+          type="button"
           class="door"
           data-show="The Mentalist"
           data-number="04"
+          aria-label="The Mentalist — coming soon"
         >
-          <span class="door-number">
-            04
+          <span class="door-number">04</span>
+          <span class="door-image">
+            <img src="/images/shows/mentalist.jpg" alt="" decoding="async">
           </span>
-          <div class="door-image">
-
-            <img
-              src="/images/shows/mentalist.jpg"
-              alt="The Mentalist"
-            >
-          </div>
-
+          <span class="door-title">The Mentalist</span>
         </button>
+
         <button
+          type="button"
           class="door"
           data-show="Breaking Bad"
           data-number="05"
+          aria-label="Breaking Bad — coming soon"
         >
-
-          <span class="door-number">
-            05
+          <span class="door-number">05</span>
+          <span class="door-image">
+            <img src="/images/shows/breaking-bad.jpg" alt="" decoding="async">
           </span>
-          <div class="door-image">
-
-            <img
-              src="/images/shows/breaking-bad.jpg"
-              alt="Breaking Bad"
-            >
-          </div>
+          <span class="door-title">Breaking Bad</span>
         </button>
+
         <button
+          type="button"
           class="door"
           data-show="Psych"
           data-number="06"
+          aria-label="Psych — coming soon"
         >
-          <span class="door-number">
-            06
+          <span class="door-number">06</span>
+          <span class="door-image">
+            <img src="/images/shows/psych.jpg" alt="" decoding="async">
           </span>
-          <div class="door-image">
-            <img
-              src="/images/shows/psych.jpg"
-              alt="Psych"
-            >
-          </div>
+          <span class="door-title">Psych</span>
         </button>
 
         <button
+          type="button"
           class="door"
           data-show="Suits"
           data-number="07"
+          aria-label="Suits — coming soon"
         >
-          <span class="door-number">
-            07
+          <span class="door-number">07</span>
+          <span class="door-image">
+            <img src="/images/shows/suits.jpg" alt="" decoding="async">
           </span>
-
-          <div class="door-image">
-
-            <img
-              src="/images/shows/suits.jpg"
-              alt="Suits"
-            >
-          </div>
-
-
-
+          <span class="door-title">Suits</span>
         </button>
+
         <button
+          type="button"
           class="door"
           data-show="House"
           data-number="08"
+          aria-label="House — coming soon"
         >
-
-          <span class="door-number">
-            08
+          <span class="door-number">08</span>
+          <span class="door-image">
+            <img src="/images/shows/house.jpg" alt="" decoding="async">
           </span>
-
-          <div class="door-image">
-
-            <img
-              src="/images/shows/house.jpg"
-              alt="House"
-            >
-
-          </div>
-
+          <span class="door-title">House</span>
         </button>
+
         <button
+          type="button"
           class="door"
           data-show="Peaky Blinders"
           data-number="09"
+          aria-label="Peaky Blinders — coming soon"
         >
-          <span class="door-number">
-            09
+          <span class="door-number">09</span>
+          <span class="door-image">
+            <img src="/images/shows/peaky-blinders.jpg" alt="" decoding="async">
           </span>
-          <div class="door-image">
-            <img
-              src="/images/shows/peaky-blinders.jpg"
-              alt="Peaky Blinders"
-            >
-          </div>
-
+          <span class="door-title">Peaky Blinders</span>
         </button>
       </section>
     </main>
 
     <footer class="footer">
-
-      <span>
-        FRICTION / 2026
-      </span>
-      <span>
-        SELECT A DOOR TO BEGIN
-      </span>
+      <span>FRICTION / 2026</span>
+      <span>STORY ROOMS COMING SOON</span>
     </footer>
-    <div
-      class="transition"
-      id="transition"
-    >
-      <div class="transition-content">
-        <span
-          class="transition-number"
-          id="transitionNumber"
-        >
-          01
-        </span>
-        <h2 id="transitionTitle">
-          DEXTER
-        </h2>
-        <p>
-          ENTERING STORY
-        </p>
-      </div>
+  </div>
+
+  <div
+    class="transition"
+    id="transition"
+    role="status"
+    aria-live="polite"
+    tabindex="-1"
+    data-html2canvas-ignore
+  >
+    <div class="transition-content">
+      <span class="transition-number" id="transitionNumber">01</span>
+      <h2 id="transitionTitle">DEXTER</h2>
+      <p id="transitionStatus">ENTERING STORY</p>
     </div>
   </div>
 
-    <div
-      class="about-overlay"
-      id="aboutOverlay"
-    >
+  <div
+    class="theme-panel"
+    id="themePanel"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="themeTitle"
+    aria-hidden="true"
+    data-html2canvas-ignore
+  >
+    <div class="theme-panel-inner">
+      <div class="theme-panel-header">
+        <span id="themeTitle">SELECT THEME</span>
+        <button type="button" id="closeTheme">CLOSE ×</button>
+      </div>
+
       <button
-        class="close-about"
-        id="closeAbout"
+        type="button"
+        class="theme-option active"
+        data-theme="dark"
+        aria-pressed="true"
       >
-        CLOSE ×
+        <span class="theme-preview theme-preview-dark"></span>
+        <span class="theme-option-text">
+          <strong>DARK</strong>
+          <small>OBSIDIAN</small>
+        </span>
+        <span class="theme-check" aria-hidden="true">✓</span>
       </button>
-      <div class="about-content">
-        <p class="eyebrow">
-          ABOUT FRICTION
-        </p>
-        <h2>
-          Stories aren't<br>
-          meant to stay<br>
-          behind glass.
-        </h2>
-        <p>
-          Friction is an interactive collection of fictional worlds.
-          Choose a door, leave the screen behind, and explore.
-        </p>
-      </div>
 
-    </div>
-    <div
-      class="theme-panel"
-      id="themePanel"
-    >
-      <div class="theme-panel-inner">
-        <div class="theme-panel-header">
-
-          <span>
-            SELECT THEME
-          </span>
-          <button id="closeTheme">
-            CLOSE ×
-          </button>
-        </div>
-        <button
-          class="theme-option active"
-          data-theme="dark"
-        >
-          <span class="theme-preview theme-preview-dark"></span>
-          <span class="theme-option-text">
-            <strong>
-              DARK
-            </strong>
-            <small>
-              OBSIDIAN
-            </small>
-          </span>
-          <span class="theme-check">
-            ✓
-          </span>
-        </button>
-        <button
-          class="theme-option"
-          data-theme="light"
-        >
-
-          <span class="theme-preview theme-preview-light"></span>
-          <span class="theme-option-text">
-            <strong>
-              LIGHT
-            </strong>
-            <small>
-              IVORY
-            </small>
-          </span>
-          <span class="theme-check">
-            ✓
-          </span>
-        </button>
-
-        <button
-          class="theme-option"
-          data-theme="venice"
-        >
-          <span class="theme-preview theme-preview-venice"></span>
-          <span class="theme-option-text">
-            <strong>
-              VENICE
-            </strong>
-            <small>
-              OCEANIC
-            </small>
-          </span>
-          <span class="theme-check">
-            ✓
-          </span>
-        </button>
-      </div>
-    </div>
-
-    <div
-      class="return-message"
-      id="returnMessage"
-    >
-      <div class="return-message-content">
-        <span
-          class="return-number"
-          id="returnNumber"
-        >
-          01
+      <button
+        type="button"
+        class="theme-option"
+        data-theme="light"
+        aria-pressed="false"
+      >
+        <span class="theme-preview theme-preview-light"></span>
+        <span class="theme-option-text">
+          <strong>LIGHT</strong>
+          <small>IVORY</small>
         </span>
-        <p
-          class="return-text"
-          id="returnText"
-        >
-          YOU MADE IT OUT.
-        </p>
-        <span
-          class="return-show"
-          id="returnShow"
-        >
-          DEXTER
+        <span class="theme-check" aria-hidden="true">✓</span>
+      </button>
+
+      <button
+        type="button"
+        class="theme-option"
+        data-theme="venice"
+        aria-pressed="false"
+      >
+        <span class="theme-preview theme-preview-venice"></span>
+        <span class="theme-option-text">
+          <strong>VENICE</strong>
+          <small>OCEANIC</small>
         </span>
-      </div>
+        <span class="theme-check" aria-hidden="true">✓</span>
+      </button>
     </div>
   </div>
-  <div id="marvel-tribute">
+
+  <div
+    id="marvel-tribute"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Marvel tribute"
+    aria-hidden="true"
+    data-html2canvas-ignore
+  >
+    <button type="button" id="closeMarvel">CLOSE ×</button>
+
     <div class="marvel-video-wrapper">
       <video
         id="marvel-video"
         playsinline
-        preload="auto"
-      >
-        <source
-          src="/videos/marvel-intro.mp4"
-          type="video/mp4"
-        >
-      </video>
+        preload="none"
+        controls
+        src="/videos/marvel-intro.mp4"
+      ></video>
+
+      <button type="button" id="playMarvel" hidden>
+        PLAY TRIBUTE
+      </button>
     </div>
   </div>
-  <script
-    type="module"
-    src="/src/main.js"
-  ></script>
 
+  <noscript>
+    <p class="noscript-message">
+      Enable JavaScript to use themes and interactive features.
+      Story rooms are coming soon.
+    </p>
+  </noscript>
+
+  <script type="module" src="/src/main.js"></script>
 </body>
 </html>
